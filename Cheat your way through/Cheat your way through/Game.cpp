@@ -17,7 +17,7 @@
 /// load and setup thne image
 /// </summary>
 Game::Game() :
-	m_window{ sf::VideoMode{ 800U, 600U, 32U }, "SFML Game" },
+	m_window{ sf::VideoMode{ 1200U, 900U, 32U }, "SFML Game" },
 	m_exitGame{false} //when true game will exit
 {
 	setupFontAndText(); // load font 
@@ -110,9 +110,11 @@ void Game::update(sf::Time t_deltaTime)
 /// </summary>
 void Game::render()
 {
-	m_window.clear(sf::Color::White);
+	m_window.clear(sf::Color{200, 173, 123});
 	m_window.draw(m_welcomeMessage);
-	m_window.draw(m_logoSprite);
+	m_window.draw(m_teacherSprite);
+	m_window.draw(m_blockheadSprite);
+	m_window.draw(m_playerSprite);
 	m_window.display();
 }
 
@@ -121,31 +123,49 @@ void Game::render()
 /// </summary>
 void Game::setupFontAndText()
 {
-	if (!m_ArialBlackfont.loadFromFile("ASSETS\\FONTS\\ariblk.ttf"))
+	if (!m_clockFont.loadFromFile("ASSETS\\FONTS\\digital.ttf"))
 	{
-		std::cout << "problem loading arial black font" << std::endl;
+		std::cout << "problem loading digital font" << std::endl;
 	}
-	m_welcomeMessage.setFont(m_ArialBlackfont);
-	m_welcomeMessage.setString("SFML Game");
-	m_welcomeMessage.setStyle(sf::Text::Underlined | sf::Text::Italic | sf::Text::Bold);
-	m_welcomeMessage.setPosition(40.0f, 40.0f);
-	m_welcomeMessage.setCharacterSize(80U);
-	m_welcomeMessage.setOutlineColor(sf::Color::Red);
-	m_welcomeMessage.setFillColor(sf::Color::Black);
-	m_welcomeMessage.setOutlineThickness(3.0f);
+	m_welcomeMessage.setFont(m_clockFont);
+	m_welcomeMessage.setString("5:00");
+	m_welcomeMessage.setStyle(sf::Text::Bold);
+	m_welcomeMessage.setPosition(825, 125);
+	m_welcomeMessage.setCharacterSize(50U);
+	m_welcomeMessage.setFillColor(sf::Color::Red);
 
 }
 
-/// <summary>
-/// load the texture and setup the sprite for the logo
-/// </summary>
+ 
+// setup function for all sprites and textures
 void Game::setupSprite()
 {
-	if (!m_logoTexture.loadFromFile("ASSETS\\IMAGES\\Teacher-sprites.png"))
+	//teacher sprite
+	if (!m_teacherTexture.loadFromFile("ASSETS\\IMAGES\\Teacher-sprites-Final.png"))
 	{
 		// simple error message if previous call fails
 		std::cout << "problem loading logo" << std::endl;
 	}
-	m_logoSprite.setTexture(m_logoTexture);
-	m_logoSprite.setPosition(300.0f, 180.0f);
+	m_teacherSprite.setTexture(m_teacherTexture);
+	m_teacherSprite.setPosition(250, 440);
+	m_teacherSprite.setTextureRect(sf::IntRect{0, 0, 80, 125});
+	m_teacherSprite.setScale(2, 2);
+
+	//student sprite
+	if (!m_studentTexture.loadFromFile("ASSETS\\IMAGES\\students.png"))
+	{
+		// simple error message if previous call fails
+		std::cout << "problem loading logo" << std::endl;
+	}
+	m_blockheadSprite.setTexture(m_studentTexture);
+	m_blockheadSprite.setPosition(800, 500);
+	m_blockheadSprite.setTextureRect(sf::IntRect{ 0,0,96,96 });
+	m_blockheadSprite.setScale(2, 2);
+
+	//player sprite
+	
+	m_playerSprite.setTexture(m_studentTexture);
+	m_playerSprite.setPosition(600, 500);
+	m_playerSprite.setTextureRect(sf::IntRect{ 0,96,96,96 });
+	m_playerSprite.setScale(2, 2);
 }
