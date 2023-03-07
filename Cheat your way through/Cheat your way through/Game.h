@@ -29,20 +29,35 @@ private:
 	
 	void setupFontAndText();
 	void setupSprite();
+	void animateIdle(int t_height, int t_width);
+	void turnToMouse(int t_recX, int t_rectY, int t_width, int t_height);
 
 	sf::RenderWindow m_window; // main SFML window
 	sf::Font m_clockFont; // font used by message
-	sf::Text m_welcomeMessage; // text used for message on screen
+	sf::Text m_clock; // text used for message on screen
 	
 	bool m_exitGame; // control exiting game
-
+	bool isSuspicious = false;
 	sf::Texture
+		m_HUDTexture,
 		m_teacherTexture,
-		m_studentTexture;
+		m_studentTexture; 
+		
 	sf::Sprite
+		m_progressBarSprite,  //part of hud
+		m_bellSprite,   //part of hud
+		m_clockSprite,   //part of hud
 		m_teacherSprite,  //teacher sprites
 		m_blockheadSprite, //student sprites
 		m_playerSprite;  //sprites for player
+	
+	const int    //values of the textureRect for player
+		PLAYER_RECT_X = 0,
+		PLAYER_RECT_Y = 96,
+		PLAYER_WIDTH = 96,
+		PLAYER_HEIGHT = 105;
+
+
 };
 
 #endif // !GAME_HPP

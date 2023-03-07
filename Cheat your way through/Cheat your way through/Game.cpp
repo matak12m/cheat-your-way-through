@@ -17,6 +17,7 @@
 /// load and setup thne image
 /// </summary>
 Game::Game() :
+	
 	m_window{ sf::VideoMode{ 1200U, 900U, 32U }, "SFML Game" },
 	m_exitGame{false} //when true game will exit
 {
@@ -99,6 +100,7 @@ void Game::processKeys(sf::Event t_event)
 /// <param name="t_deltaTime">time interval per frame</param>
 void Game::update(sf::Time t_deltaTime)
 {
+	turnToMouse(PLAYER_RECT_X, PLAYER_RECT_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
 	if (m_exitGame)
 	{
 		m_window.close();
@@ -111,10 +113,13 @@ void Game::update(sf::Time t_deltaTime)
 void Game::render()
 {
 	m_window.clear(sf::Color{200, 173, 123});
-	m_window.draw(m_welcomeMessage);
 	m_window.draw(m_teacherSprite);
 	m_window.draw(m_blockheadSprite);
 	m_window.draw(m_playerSprite);
+	m_window.draw(m_progressBarSprite);
+	m_window.draw(m_clockSprite);
+	m_window.draw(m_clock);
+	m_window.draw(m_bellSprite);
 	m_window.display();
 }
 
@@ -127,12 +132,12 @@ void Game::setupFontAndText()
 	{
 		std::cout << "problem loading digital font" << std::endl;
 	}
-	m_welcomeMessage.setFont(m_clockFont);
-	m_welcomeMessage.setString("5:00");
-	m_welcomeMessage.setStyle(sf::Text::Bold);
-	m_welcomeMessage.setPosition(825, 125);
-	m_welcomeMessage.setCharacterSize(50U);
-	m_welcomeMessage.setFillColor(sf::Color::Red);
+	m_clock.setFont(m_clockFont);
+	m_clock.setString("5:00");
+	m_clock.setStyle(sf::Text::Bold);
+	m_clock.setPosition(825, 125);
+	m_clock.setCharacterSize(50U);
+	m_clock.setFillColor(sf::Color::Red);
 
 }
 
@@ -144,7 +149,7 @@ void Game::setupSprite()
 	if (!m_teacherTexture.loadFromFile("ASSETS\\IMAGES\\Teacher-sprites-Final.png"))
 	{
 		// simple error message if previous call fails
-		std::cout << "problem loading logo" << std::endl;
+		std::cout << "problem loading teacher" << std::endl;
 	}
 	m_teacherSprite.setTexture(m_teacherTexture);
 	m_teacherSprite.setPosition(250, 440);
@@ -155,7 +160,7 @@ void Game::setupSprite()
 	if (!m_studentTexture.loadFromFile("ASSETS\\IMAGES\\students.png"))
 	{
 		// simple error message if previous call fails
-		std::cout << "problem loading logo" << std::endl;
+		std::cout << "problem loading students" << std::endl;
 	}
 	m_blockheadSprite.setTexture(m_studentTexture);
 	m_blockheadSprite.setPosition(800, 500);
@@ -168,4 +173,66 @@ void Game::setupSprite()
 	m_playerSprite.setPosition(600, 500);
 	m_playerSprite.setTextureRect(sf::IntRect{ 0,96,96,96 });
 	m_playerSprite.setScale(2, 2);
+
+	//HUD sprites
+	if (!m_HUDTexture.loadFromFile("ASSETS\\IMAGES\\HUD.png"))
+	{
+		// simple error message if previous call fails
+		std::cout << "problem loading HUD" << std::endl;
+	}
+
+	//progress bar
+	m_progressBarSprite.setTexture(m_HUDTexture);
+	m_progressBarSprite.setPosition(95, 125);
+	m_progressBarSprite.setTextureRect(sf::IntRect{ 0, 0, 900, 80 });
+	m_progressBarSprite.setScale(0.8, 1);
+
+	//clock background
+	m_clockSprite.setTexture(m_HUDTexture);
+	m_clockSprite.setPosition(810, 120);
+	m_clockSprite.setTextureRect(sf::IntRect{ 0, 80,224 ,80 });
+	m_clockSprite.setScale(0.85, 1);
+	//bell sprite
+	m_bellSprite.setTexture(m_HUDTexture);
+	m_bellSprite.setPosition(1000, 110);
+	m_bellSprite.setTextureRect(sf::IntRect{ 240, 80, 128, 128 });
+}
+
+void Game::animateIdle(int t_height, int t_width)
+{
+	//todo: general animation script for teacher, player and blockhead.
+
+}
+
+
+void Game::turnToMouse(int t_rectX, int t_rectY, int t_width, int t_height)   //animates the player sporite to change depending on mouse position
+{
+	const int
+		LOOKUP_THRESHOLD_Y = 700,
+		MIDDLE_THRESHOLD_X = 1100,
+		MIDDLE_THRESHOLD_Y = 600,
+		COPY_THRESHOLD_X = 1200,
+		COPY_THRESHOLD_Y = 600;
+
+	sf::Vector2f MousePosition = static_cast<sf::Vector2f>(sf::Mouse::getPosition());
+
+	if (MousePosition.y >= COPY_THRESHOLD_Y && MousePosition.x >= COPY_THRESHOLD_X) {   //mousePosition > COPY instead of MousePosition < COPY, setting the sprite once the mouse is in the bottom right section of the screen 
+		m_playerSprite.setTextureRect(sf::IntRect(t_rectX + t_width * 4, t_rectY, t_width, t_height));
+		isSuspicious = true;
+	}
+	else if (MousePosition.x > MIDDLE_THRESHOLD_X) {
+		m_playerSprite.setTextureRect(sf::IntRect(t_rectX + t_width * 3, t_rectY, t_width, t_height));  //sets the sprite to look at middle
+		isSuspicious = true;
+	}
+	else if (MousePosition.y < LOOKUP_THRESHOLD_Y) {
+		m_playerSprite.setTextureRect(sf::IntRect(t_rectX + t_width * 2, t_rectY, t_width, t_height));    //sets the sprite to looking up from desk if mouse is in the right location
+		isSuspicious = false;
+	}
+	else {
+		m_playerSprite.setTextureRect(sf::IntRect(t_rectX, t_rectY, t_width, t_height));  //temporary line until animateIdle is finished.
+		isSuspicious = false;
+		animateIdle(PLAYER_WIDTH, PLAYER_HEIGHT);  //plays the idle animation of player
+		// writeDown();   (affect progress bar)
+
+	}
 }
