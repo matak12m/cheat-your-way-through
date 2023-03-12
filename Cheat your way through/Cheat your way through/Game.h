@@ -24,6 +24,7 @@ private:
 
 	void processEvents();
 	void processKeys(sf::Event t_event);
+	void processMouse(sf::Event t_event);
 	void update(sf::Time t_deltaTime);
 	void render();
 	
@@ -37,7 +38,9 @@ private:
 	sf::Text m_clock; // text used for message on screen
 	
 	bool m_exitGame; // control exiting game
-	bool isSuspicious = false;
+	bool isSuspicious = false;  //todo: replace these booleans with a single integer instead
+	bool isCopying = false;
+	bool isWriting = false;
 	sf::Texture
 		m_HUDTexture,
 		m_teacherTexture,
@@ -59,6 +62,5 @@ private:
 
 
 };
-
 #endif // !GAME_HPP
 
