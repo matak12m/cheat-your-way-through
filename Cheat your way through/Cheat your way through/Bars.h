@@ -39,4 +39,4 @@ Bar static writeBar;
 
 
 
-#endif // !GAME_HPP
+#endif 

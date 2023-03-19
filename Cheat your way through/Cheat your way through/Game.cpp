@@ -8,6 +8,7 @@
 #include "Game.h"
 #include <iostream>
 #include "Bars.h"
+#include "Person.h"
 
 
 /// <summary>
@@ -27,6 +28,7 @@ Game::Game() :
 	writeBar.isRestricted = true;
 	writeBar.setupBars(writeBar.isRestricted);
 	copyBar.setupBars(copyBar.isRestricted);
+
 }
 
 /// <summary>
@@ -109,12 +111,12 @@ void Game::processMouse(sf::Event t_event) {
 	if (isCopying && sf::Mouse::Left== t_event.key.code)   //currentl doesnt support holding down left click
 	{
 		copyBar.increase(copyBar.isRestricted);
-		std::cout << "copying";
+		
 	}
 	if (isWriting && sf::Mouse::Left == t_event.key.code)
 	{
 		writeBar.increase(writeBar.isRestricted);
-		std::cout << "writing";
+		
 	}
 }
 
@@ -130,7 +132,8 @@ void Game::update(sf::Time t_deltaTime)
 	{
 		m_window.close();
 	}
-
+	blockHead.animateIdle(0, 1);
+	teacher.teacherCycle();
 }
 
 /// <summary>
@@ -141,9 +144,9 @@ void Game::render()
 	m_window.clear(sf::Color{200, 173, 123});
 	m_window.draw(copyBar.barBody);
 	m_window.draw(writeBar.barBody);
-	m_window.draw(m_teacherSprite);
-	m_window.draw(m_blockheadSprite);
-	m_window.draw(m_playerSprite);
+	m_window.draw(teacher.Sprite);
+	m_window.draw(blockHead.Sprite);
+	m_window.draw(player.Sprite);
 	m_window.draw(m_progressBarSprite);
 	m_window.draw(m_clockSprite);
 	m_window.draw(m_clock);
@@ -173,38 +176,11 @@ void Game::setupFontAndText()
 // setup function for all sprites and textures
 void Game::setupSprite()
 {
-	//teacher sprite
-	if (!m_teacherTexture.loadFromFile("ASSETS\\IMAGES\\Teacher-sprites-Final.png"))
-	{
-		// simple error message if previous call fails
-		std::cout << "problem loading teacher" << std::endl;
-	}
-	m_teacherSprite.setTexture(m_teacherTexture);
-	m_teacherSprite.setPosition(250, 440);
-	m_teacherSprite.setTextureRect(sf::IntRect{0, 0, 80, 125});
-	m_teacherSprite.setScale(2, 2);
-
-	//student sprite
-	if (!m_studentTexture.loadFromFile("ASSETS\\IMAGES\\students.png"))
-	{
-		// simple error message if previous call fails
-		std::cout << "problem loading students" << std::endl;
-	}
-	m_blockheadSprite.setTexture(m_studentTexture);
-	m_blockheadSprite.setPosition(800, 500);
-	m_blockheadSprite.setTextureRect(sf::IntRect{ 0,0,96,96 });
-	m_blockheadSprite.setScale(2, 2);
-
-	//player sprite
 	
-	m_playerSprite.setTexture(m_studentTexture);
-	m_playerSprite.setPosition(600, 500);
-	m_playerSprite.setTextureRect(sf::IntRect{ 0,96,96,96 });
-	m_playerSprite.setScale(2, 2);
 
 	//HUD sprites
 	if (!m_HUDTexture.loadFromFile("ASSETS\\IMAGES\\HUD.png"))
-	{
+	{ 
 		// simple error message if previous call fails
 		std::cout << "problem loading HUD" << std::endl;
 	}
@@ -226,14 +202,42 @@ void Game::setupSprite()
 	m_bellSprite.setTextureRect(sf::IntRect{ 240, 80, 128, 128 });
 
 
-	
+	//teacher sprite
+	if (!teacher.Texture.loadFromFile("ASSETS\\IMAGES\\Teacher-sprites-Final.png"))
+	{
+		// simple error message if previous call fails
+		std::cout << "problem loading teacher" << std::endl;
+	}
+	teacher.Sprite.setPosition(250, 440);
+	teacher.Sprite.setTexture(teacher.Texture);
+	teacher.Sprite.setTextureRect(sf::IntRect{ 0, 0, spriteWidth,spriteHeight });
+	teacher.Sprite.setScale(2, 2);
+
+	//blockhead setup
+	if (!blockHead.Texture.loadFromFile("ASSETS\\IMAGES\\blockHead.png"))
+	{
+		// simple error message if previous call fails
+		std::cout << "problem loading students" << std::endl;
+	}
+	blockHead.Sprite.setPosition(800, 500);
+	blockHead.Sprite.setTexture(blockHead.Texture);
+	blockHead.Sprite.setTextureRect(sf::IntRect{ 0, 0, spriteWidth,spriteHeight });
+	blockHead.Sprite.setScale(2, 2);
+	//player sprite
+
+	if (!player.Texture.loadFromFile("ASSETS\\IMAGES\\player-sprites.png"))
+	{
+		// simple error message if previous call fails
+		std::cout << "problem loading students" << std::endl;
+	}
+
+	player.Sprite.setPosition(600, 500);
+	player.Sprite.setTexture(player.Texture);
+	player.Sprite.setTextureRect(sf::IntRect{ 0, 0, spriteWidth,spriteHeight });
+	player.Sprite.setScale(2, 2);
 }
 
-void Game::animateIdle(int t_height, int t_width)
-{
-	//todo: general animation script for teacher, player and blockhead.
 
-}
 
 
 void Game::turnToMouse(int t_rectX, int t_rectY, int t_width, int t_height)   //animates the player sporite to change depending on mouse position
@@ -252,30 +256,30 @@ void Game::turnToMouse(int t_rectX, int t_rectY, int t_width, int t_height)   //
 	sf::Vector2f MousePosition = static_cast<sf::Vector2f>(sf::Mouse::getPosition(m_window));  //getPosition(m_window) returns a position relative to the game window rather than the desktop.
 
 	if (MousePosition.y >= COPY_THRESHOLD_Y && MousePosition.x >= COPY_THRESHOLD_X) {   //mousePosition > COPY instead of MousePosition < COPY, setting the sprite once the mouse is in the bottom right section of the screen 
-		m_playerSprite.setTextureRect(sf::IntRect(t_rectX + t_width * 4, t_rectY, t_width, t_height));
+		player.Sprite.setTextureRect(sf::IntRect(t_rectX + t_width * 4 , t_rectY, t_width, t_height));
 		isSuspicious = true;
 		isCopying = true;
 		isWriting = false;
 
 	}
 	else if (MousePosition.x > MIDDLE_THRESHOLD_X) {
-		m_playerSprite.setTextureRect(sf::IntRect(t_rectX + t_width * 3, t_rectY, t_width, t_height));  //sets the sprite to look at middle
+		player.Sprite.setTextureRect(sf::IntRect(t_rectX + t_width * 3, t_rectY, t_width, t_height));  //sets the sprite to look at middle
 		isSuspicious = true;
 		isCopying = false;
 		isWriting = false;
 	}
 	else if (MousePosition.y < LOOKUP_THRESHOLD_Y) {
-		m_playerSprite.setTextureRect(sf::IntRect(t_rectX + t_width * 2, t_rectY, t_width, t_height));    //sets the sprite to looking up from desk if mouse is in the right location
+		player.Sprite.setTextureRect(sf::IntRect(t_rectX + t_width * 2, t_rectY, t_width, t_height));    //sets the sprite to looking up from desk if mouse is in the right location
 		isSuspicious = false;
 		isCopying = false;
 		isWriting = false;
 	}
 	else {
-		m_playerSprite.setTextureRect(sf::IntRect(t_rectX, t_rectY, t_width, t_height));  //temporary line until animateIdle is finished.
+		player.Sprite.setTextureRect(sf::IntRect(t_rectX, t_rectY, t_width, t_height));  //temporary line until animateIdle is finished.
 		isSuspicious = false;
 		isCopying = false;
 		isWriting = true;
-		animateIdle(PLAYER_WIDTH, PLAYER_HEIGHT);  //plays the idle animation of player
+		player.animateIdle(0, 1);  //plays the idle animation of player
 		// writeDown();   (affect progress bar)
 
 	}

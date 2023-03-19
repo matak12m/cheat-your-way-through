@@ -30,7 +30,6 @@ private:
 	
 	void setupFontAndText();
 	void setupSprite();
-	void animateIdle(int t_height, int t_width);
 	void turnToMouse(int t_recX, int t_rectY, int t_width, int t_height);
 
 	sf::RenderWindow m_window; // main SFML window
@@ -42,24 +41,22 @@ private:
 	bool isCopying = false;
 	bool isWriting = false;
 	sf::Texture
-		m_HUDTexture,
-		m_teacherTexture,
-		m_studentTexture; 
+		m_HUDTexture; 
 		
 	sf::Sprite
 		m_progressBarSprite,  //part of hud
 		m_bellSprite,   //part of hud
-		m_clockSprite,   //part of hud
-		m_teacherSprite,  //teacher sprites
-		m_blockheadSprite, //student sprites
-		m_playerSprite;  //sprites for player
+		m_clockSprite;   //part of hud
+	
 	
 	const int    //values of the textureRect for player
 		PLAYER_RECT_X = 0,
-		PLAYER_RECT_Y = 96,
+		PLAYER_RECT_Y = 0,
 		PLAYER_WIDTH = 96,
 		PLAYER_HEIGHT = 105;
 
+	const int spriteHeight = 128;
+	const int spriteWidth = 96;
 
 };
 #endif // !GAME_HPP
