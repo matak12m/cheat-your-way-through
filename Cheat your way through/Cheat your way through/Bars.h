@@ -28,7 +28,7 @@ public:
 	sf::CircleShape barEnd;
 	sf::RectangleShape barBody;
 	
-	void increase(bool isRestricted);
+	void writeAndCopy(bool isRestricted);
 	void setupBars(bool blueColor);
 };
 Bar  static copyBar;

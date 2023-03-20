@@ -87,7 +87,7 @@ void Game::processEvents()
 		{
 			processKeys(newEvent);
 		}
-		if ((isCopying || isWriting) && sf::Event::MouseButtonPressed == newEvent.type)
+		if (!gameEnd &&(isCopying || isWriting) && sf::Event::MouseButtonPressed == newEvent.type)
 		{
 			processMouse(newEvent);
 		}
@@ -110,12 +110,12 @@ void Game::processKeys(sf::Event t_event)
 void Game::processMouse(sf::Event t_event) {
 	if (isCopying && sf::Mouse::Left== t_event.key.code)   //currentl doesnt support holding down left click
 	{
-		copyBar.increase(copyBar.isRestricted);
+		copyBar.writeAndCopy(copyBar.isRestricted);
 		
 	}
 	if (isWriting && sf::Mouse::Left == t_event.key.code)
 	{
-		writeBar.increase(writeBar.isRestricted);
+		writeBar.writeAndCopy(writeBar.isRestricted);
 		
 	}
 }
@@ -131,9 +131,17 @@ void Game::update(sf::Time t_deltaTime)
 	if (m_exitGame)
 	{
 		m_window.close();
+	} 
+	if (!gameEnd) {
+		blockHead.animateIdle(0, 1);
+		if (teacher.canAnimateIdle)
+		{
+			teacher.teacherCycle();
+		}
+		else {
+			teacher.teacherSwap();
+		}
 	}
-	blockHead.animateIdle(0, 1);
-	teacher.teacherCycle();
 }
 
 /// <summary>
@@ -151,6 +159,11 @@ void Game::render()
 	m_window.draw(m_clockSprite);
 	m_window.draw(m_clock);
 	m_window.draw(m_bellSprite);
+	if (gameEnd)
+	{
+		m_window.draw(m_gameEndBox);
+		m_window.draw(m_gameEndText);
+	}
 	m_window.display();
 }
 
@@ -169,6 +182,14 @@ void Game::setupFontAndText()
 	m_clock.setPosition(825, 125);
 	m_clock.setCharacterSize(50U);
 	m_clock.setFillColor(sf::Color::Red);
+	//game end text:
+
+	m_gameEndText.setFont(m_clockFont);
+	m_gameEndText.setString("The teacher\n Caught you!\n Game over!");
+	m_gameEndText.setStyle(sf::Text::Bold);
+	m_gameEndText.setPosition(450, 350);
+	m_gameEndText.setCharacterSize(25U);
+	m_gameEndText.setFillColor(sf::Color::Red);
 
 }
 
@@ -235,6 +256,11 @@ void Game::setupSprite()
 	player.Sprite.setTexture(player.Texture);
 	player.Sprite.setTextureRect(sf::IntRect{ 0, 0, spriteWidth,spriteHeight });
 	player.Sprite.setScale(2, 2);
+	//setup end game text box
+
+
+	m_gameEndBox.setSize(sf::Vector2f{ 400, 300 });
+	m_gameEndBox.setPosition(400, 300);
 }
 
 
@@ -257,26 +283,31 @@ void Game::turnToMouse(int t_rectX, int t_rectY, int t_width, int t_height)   //
 
 	if (MousePosition.y >= COPY_THRESHOLD_Y && MousePosition.x >= COPY_THRESHOLD_X) {   //mousePosition > COPY instead of MousePosition < COPY, setting the sprite once the mouse is in the bottom right section of the screen 
 		player.Sprite.setTextureRect(sf::IntRect(t_rectX + t_width * 4 , t_rectY, t_width, t_height));
-		isSuspicious = true;
 		isCopying = true;
 		isWriting = false;
+		if (!teacher.lookingAway) {
+			gameEnd = true;
+		}
 
 	}
 	else if (MousePosition.x > MIDDLE_THRESHOLD_X) {
 		player.Sprite.setTextureRect(sf::IntRect(t_rectX + t_width * 3, t_rectY, t_width, t_height));  //sets the sprite to look at middle
-		isSuspicious = true;
 		isCopying = false;
 		isWriting = false;
+		if (!teacher.lookingAway)
+		{
+			gameEnd = true;
+		}
 	}
 	else if (MousePosition.y < LOOKUP_THRESHOLD_Y) {
 		player.Sprite.setTextureRect(sf::IntRect(t_rectX + t_width * 2, t_rectY, t_width, t_height));    //sets the sprite to looking up from desk if mouse is in the right location
-		isSuspicious = false;
+		
 		isCopying = false;
 		isWriting = false;
 	}
 	else {
 		player.Sprite.setTextureRect(sf::IntRect(t_rectX, t_rectY, t_width, t_height));  //temporary line until animateIdle is finished.
-		isSuspicious = false;
+		
 		isCopying = false;
 		isWriting = true;
 		player.animateIdle(0, 1);  //plays the idle animation of player

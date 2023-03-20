@@ -13,15 +13,16 @@ class Person
 {
 private:
 	sf::Clock m_frametime;
-	sf::Clock m_teacherFrameTime;
+	sf::Clock m_swapTime;
 	float m_animationLenght = 2; //total time for the animation
-	float teacherSwapFrameTime = 0;
 public:
 
+	Person() {};
+
+	bool lookingAway{ false };
 	const int spriteHeight = 128;
 	const int spriteWidth = 96;
 	int positionTime = 0;
-	bool lookingAway = false;
 	bool generateRandom = true; //we need to declare this variable here because it needs to be set as something outside the function teacherCycle();
 	bool canAnimateIdle = true;
 	
@@ -35,9 +36,6 @@ public:
 	void teacherSwap();
 	
 };
-Person static teacher;
-Person static player;
-Person static blockHead;
 
 
 
