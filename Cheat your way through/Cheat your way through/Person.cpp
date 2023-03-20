@@ -56,31 +56,30 @@ void Person::teacherCycle() //handles the behavious of the teacher, ready to be 
 	}
 }
 
-void Person::teacherSwap()  //handles the teacher's animation and logic of changing his positions between looing away and not
-							//DOESNT WORK, need to fix. Is only being called once even though it should be called continuously while animation plays
+void Person::teacherSwap()  //handles the teacher's animation and logic of changing his positions between looking away and not
 {
 
 	float frameTime = m_swapTime.getElapsedTime().asSeconds();
 	std::cout << frameTime;
 	std::cout << std::endl;
 	if (lookingAway) {
-		if (frameTime < 1) {
+		if (frameTime < 2) {
 			Sprite.setTextureRect(sf::IntRect{ spriteWidth * 5, 0, spriteWidth, spriteHeight });
 		}
-		else if (frameTime < 1.5) {
+		else if (frameTime < 2.5) {
 			Sprite.setTextureRect(sf::IntRect{ spriteWidth * 6, 0, spriteWidth, spriteHeight });
 		}
 	}
 	else {
-		if (frameTime < 1) {
+		if (frameTime < 2) {
 			Sprite.setTextureRect(sf::IntRect{ spriteWidth * 2, 0, spriteWidth, spriteHeight });
 		}
-		else if (frameTime < 1.5) {
+		else if (frameTime < 2.5) {
 			Sprite.setTextureRect(sf::IntRect{ spriteWidth * 6, 0, spriteWidth, spriteHeight });
 		}
 	}
 	
-	if (frameTime >= 1.5) {
+	if (frameTime >= 2.5) { //this code needs to execute only once per animation, not continuously like the rest of this function.
 		lookingAway = !lookingAway;
 		canAnimateIdle = true;
 		m_frametime.restart();

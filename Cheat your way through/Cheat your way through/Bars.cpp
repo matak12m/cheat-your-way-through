@@ -3,9 +3,9 @@
 
 
 
-void Bar::writeAndCopy(bool isRestricted)  //code for 2 bars, one fills out before the other and effectively sets a maximum for the other.
+void Bar::writeAndCopy(bool isRestricted, std::string &message, bool &endGame )  //code for 2 bars, one fills out before the other and effectively sets a maximum for the other.
 {
-	int speed = 10; //speed at which the bars progress.
+	int speed = 15; //speed at which the bars progress.
 
 	if (!isRestricted)
 	{
@@ -19,6 +19,11 @@ void Bar::writeAndCopy(bool isRestricted)  //code for 2 bars, one fills out befo
 	{
 		writeBar.lenght += speed;
 		barBody.setSize(sf::Vector2f{ writeBar.lenght, writeBar.height });
+		if (writeBar.lenght >= 725) {
+			message = "You succesfully\n copied the\n whole exam!";
+			endGame = true;
+		}
+
 	}
 
 }

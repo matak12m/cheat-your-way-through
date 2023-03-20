@@ -46,19 +46,22 @@ private:
 	sf::Text m_gameEndText;
 	sf::RectangleShape m_gameEndBox;
 	
-	bool m_exitGame; // control exiting game
-	bool isSuspicious = false;  //todo: replace these booleans with a single integer instead
-	bool isCopying = false;
-	bool isWriting = false;
-	bool gameEnd = false;
+	std::string endMessage = "The teacher\n Caught you!\n Game over!";
+	bool
+		m_exitGame, // control exiting game
+		isSuspicious = false,  //todo: replace these booleans with a single integer instead
+		isCopying = false,
+		isWriting = false,
+		gameEnd = false;
 	sf::Texture
-		m_HUDTexture; 
-		
+		m_HUDTexture,
+		m_chalkboardTexture;
 	sf::Sprite
+		m_chalkboardSprite,
 		m_progressBarSprite,  //part of hud
 		m_bellSprite,   //part of hud
 		m_clockSprite;   //part of hud
-	
+		
 	
 	const int    //values of the textureRect for player
 		PLAYER_RECT_X = 0,

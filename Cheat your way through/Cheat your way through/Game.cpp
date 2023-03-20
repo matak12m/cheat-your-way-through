@@ -110,12 +110,12 @@ void Game::processKeys(sf::Event t_event)
 void Game::processMouse(sf::Event t_event) {
 	if (isCopying && sf::Mouse::Left== t_event.key.code)   //currentl doesnt support holding down left click
 	{
-		copyBar.writeAndCopy(copyBar.isRestricted);
+		copyBar.writeAndCopy(copyBar.isRestricted, endMessage, gameEnd);
 		
 	}
 	if (isWriting && sf::Mouse::Left == t_event.key.code)
 	{
-		writeBar.writeAndCopy(writeBar.isRestricted);
+		writeBar.writeAndCopy(writeBar.isRestricted, endMessage, gameEnd);
 		
 	}
 }
@@ -152,6 +152,7 @@ void Game::render()
 	m_window.clear(sf::Color{200, 173, 123});
 	m_window.draw(copyBar.barBody);
 	m_window.draw(writeBar.barBody);
+	m_window.draw(m_chalkboardSprite);
 	m_window.draw(teacher.Sprite);
 	m_window.draw(blockHead.Sprite);
 	m_window.draw(player.Sprite);
@@ -161,6 +162,7 @@ void Game::render()
 	m_window.draw(m_bellSprite);
 	if (gameEnd)
 	{
+		m_gameEndText.setString(endMessage);
 		m_window.draw(m_gameEndBox);
 		m_window.draw(m_gameEndText);
 	}
@@ -185,7 +187,6 @@ void Game::setupFontAndText()
 	//game end text:
 
 	m_gameEndText.setFont(m_clockFont);
-	m_gameEndText.setString("The teacher\n Caught you!\n Game over!");
 	m_gameEndText.setStyle(sf::Text::Bold);
 	m_gameEndText.setPosition(450, 350);
 	m_gameEndText.setCharacterSize(25U);
@@ -261,6 +262,17 @@ void Game::setupSprite()
 
 	m_gameEndBox.setSize(sf::Vector2f{ 400, 300 });
 	m_gameEndBox.setPosition(400, 300);
+	//setup chalkboard
+
+	if (!m_chalkboardTexture.loadFromFile("ASSETS\\IMAGES\\chalkboard.png"))
+	{
+		// simple error message if previous call fails
+		std::cout << "problem loading students" << std::endl;
+	}
+
+	m_chalkboardSprite.setTexture(m_chalkboardTexture);
+	m_chalkboardSprite.setPosition(150, 440);
+	m_chalkboardSprite.setScale(2, 2);
 }
 
 

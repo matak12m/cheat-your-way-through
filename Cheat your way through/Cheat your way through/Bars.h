@@ -28,7 +28,7 @@ public:
 	sf::CircleShape barEnd;
 	sf::RectangleShape barBody;
 	
-	void writeAndCopy(bool isRestricted);
+	void writeAndCopy(bool isRestricted, std::string &message, bool &endGame);
 	void setupBars(bool blueColor);
 };
 Bar  static copyBar;
